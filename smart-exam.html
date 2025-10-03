@@ -895,14 +895,26 @@
             const minutes = Math.floor(timeRemaining / 60);
             const seconds = timeRemaining % 60;
             const timerDisplay = document.getElementById('timer-display');
-            timerDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            if (timerDisplay) {
+                timerDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            }
             
             // Update timer circle color based on remaining time
             const timerCircle = document.querySelector('.timer-circle');
-            if (timeRemaining < 300) { // Less than 5 minutes
-                timerCircle.style.background = 'conic-gradient(from 0deg, #ef4444, #dc2626, #ef4444)';
-            } else if (timeRemaining < 600) { // Less than 10 minutes
-                timerCircle.style.background = 'conic-gradient(from 0deg, #f59e0b, #d97706, #f59e0b)';
+            if (timerCircle) {
+                if (timeRemaining < 300) { // Less than 5 minutes
+                    timerCircle.style.background = 'conic-gradient(from 0deg, #ef4444, #dc2626, #ef4444)';
+                } else if (timeRemaining < 600) { // Less than 10 minutes
+                    timerCircle.style.background = 'conic-gradient(from 0deg, #f59e0b, #d97706, #f59e0b)';
+                } else {
+                    timerCircle.style.background = 'conic-gradient(from 0deg, #4facfe, #00f2fe, #4facfe)';
+                }
+            }
+            
+            // Update sidebar timer
+            const sidebarTimer = document.querySelectorAll('.stat-value')[1];
+            if (sidebarTimer) {
+                sidebarTimer.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
             }
             
             if (timeRemaining > 0) {
@@ -978,24 +990,89 @@
             });
         }
 
+        // Update question display
+        function updateQuestionDisplay() {
+            // Update question number
+            document.querySelector('.question-number').textContent = `السؤال ${currentQuestion}`;
+            
+            // Update question text (you can add dynamic questions here)
+            const questionTexts = [
+                "ما هو ناتج العملية: 15 + 27؟",
+                "إذا كان لدينا المستطيل بطول 8 سم وعرض 5 سم، فما هي مساحته؟",
+                "ما هو ناتج العملية: 144 ÷ 12؟",
+                "إذا كان لدينا المثلث بقاعدة 6 سم وارتفاع 4 سم، فما هي مساحته؟",
+                "إذا كان لدينا المعادلة التربيعية: x² - 5x + 6 = 0، فما هي قيم x التي تحقق هذه المعادلة؟",
+                "ما هو ناتج العملية: 7 × 8؟",
+                "إذا كان لدينا الدائرة بنصف قطر 5 سم، فما هي مساحتها؟",
+                "ما هو ناتج العملية: 25 - 13؟",
+                "إذا كان لدينا المربع بضلع 9 سم، فما هي مساحته؟",
+                "ما هو ناتج العملية: 36 ÷ 6؟"
+            ];
+            
+            if (questionTexts[currentQuestion - 1]) {
+                document.querySelector('.question-text').textContent = questionTexts[currentQuestion - 1];
+            }
+            
+            // Clear previous selection
+            document.querySelectorAll('.option-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            
+            // Restore previous selection if exists
+            if (selectedAnswers[currentQuestion]) {
+                const optionElements = document.querySelectorAll('.option-item');
+                const optionIndex = ['A', 'B', 'C', 'D'].indexOf(selectedAnswers[currentQuestion]);
+                if (optionIndex >= 0 && optionElements[optionIndex]) {
+                    optionElements[optionIndex].classList.add('selected');
+                }
+            }
+            
+            // Update confidence level
+            document.querySelectorAll('.confidence-btn').forEach(btn => btn.classList.remove('active'));
+            if (confidenceLevels[currentQuestion]) {
+                const confidenceBtns = document.querySelectorAll('.confidence-btn');
+                if (confidenceBtns[confidenceLevels[currentQuestion] - 1]) {
+                    confidenceBtns[confidenceLevels[currentQuestion] - 1].classList.add('active');
+                }
+            }
+        }
+
         // Update progress
         function updateProgress() {
             const answeredCount = Object.keys(selectedAnswers).length;
             const progressPercentage = (answeredCount / totalQuestions) * 100;
             
             // Update progress bar
-            document.querySelector('.progress-fill').style.width = `${progressPercentage}%`;
+            const progressFill = document.querySelector('.progress-fill');
+            if (progressFill) {
+                progressFill.style.width = `${progressPercentage}%`;
+            }
             
             // Update progress ring
             const circumference = 2 * Math.PI * 25;
             const offset = circumference - (progressPercentage / 100) * circumference;
-            document.querySelector('.progress-ring-circle').style.strokeDashoffset = offset;
+            const progressRing = document.querySelector('.progress-ring-circle');
+            if (progressRing) {
+                progressRing.style.strokeDashoffset = offset;
+            }
             
             // Update progress text
-            document.querySelector('.exam-progress-ring div').textContent = `${Math.round(progressPercentage)}%`;
+            const progressText = document.querySelector('.exam-progress-ring div');
+            if (progressText) {
+                progressText.textContent = `${Math.round(progressPercentage)}%`;
+            }
             
             // Update stats
-            document.querySelector('.stat-value').textContent = `${answeredCount}/${totalQuestions}`;
+            const statValues = document.querySelectorAll('.stat-value');
+            if (statValues.length > 0) {
+                statValues[0].textContent = `${answeredCount}/${totalQuestions}`;
+            }
+            
+            // Update progress info text
+            const progressInfo = document.querySelector('.progress-info p');
+            if (progressInfo) {
+                progressInfo.textContent = `السؤال ${currentQuestion} من ${totalQuestions}`;
+            }
         }
 
         // Confidence level selection

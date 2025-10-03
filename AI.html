@@ -616,12 +616,11 @@ document.addEventListener('DOMContentLoaded', () => {
       loadInitialState() {
           this.chatMode = 'normal';
           this.uploadedImageData = null;
-          this.addMessage("أهلاً بك! أنا المساعد الشخصي للمطور عمر الفرجانى. كيف يمكنني مساعدتك اليوم؟", 'ai');
+          this.addMessage("أهلاً بك! أنا المساعد الشخصي للمطور عمر الفرجانى. أنا هنا لأعطيك معلومات عن المطور فقط.", 'ai');
           this.showQuickReplies([
-              { text: "من هو المطور وكيفية التواصل معه؟", action: 'send' },
-              { text: "✨ أدوات ذكية", action: 'show_smart_tools', isGemini: true }
+              { text: "من هو المطور وكيفية التواصل معه؟", action: 'send' }
           ]);
-          this.input.placeholder = "اسأل أي حاجة عن المطور عمر...";
+          this.input.placeholder = "اسأل عن المطور عمر فقط...";
       },
 
       sendMessage() {
@@ -665,17 +664,9 @@ document.addEventListener('DOMContentLoaded', () => {
       },
 
       showSmartTools() {
-          this.addMessage("بكل سرور! دي الأدوات الذكية اللي أقدر أساعدك بيها:", 'ai');
+          this.addMessage("عذراً، أنا مساعد شخصي للمطور عمر فقط. يمكنني الإجابة على أسئلتك عن المطور فقط.", 'ai');
           this.showQuickReplies([
-              { text: "✨ تحليل صورة", action: 'activate_image_analyzer', isGemini: true },
-              { text: "✨ شرح كود", action: 'activate_code_explainer', isGemini: true },
-              { text: "✨ تحسين وتصحيح كود", action: 'activate_code_refactorer', isGemini: true },
-              { text: "✨ إنشاء Regex", action: 'activate_regex_generator', isGemini: true },
-              { text: "✨ اقتراح فكرة مشروع", action: 'activate_idea_generator', isGemini: true },
-              { text: "✨ كتابة إيميل/رسالة", action: 'activate_email_drafter', isGemini: true },
-              { text: "✨ إنشاء خطة تعلم", action: 'activate_learning_path_generator', isGemini: true },
-              { text: "✨ ترجمة احترافية", action: 'activate_translator', isGemini: true },
-              { text: "✨ تلخيص نصوص", action: 'activate_summarizer', isGemini: true },
+              { text: "من هو المطور وكيفية التواصل معه؟", action: 'send' }
           ]);
       },
 
@@ -744,7 +735,7 @@ document.addEventListener('DOMContentLoaded', () => {
               case 'regex_generator': return `أنت خبير عالمي في Regex. حوّل الوصف التالي إلى نمط Regex مع شرحه: "${prompt}"`;
               case 'translation': return `أنت مترجم فوري محترف. ترجم النص التالي مع الحفاظ على السياق واللهجة إن أمكن: "${prompt}"`;
               case 'summarization': return `أنت باحث وخبير في تلخيص المعلومات. لخص النص التالي في نقاط واضحة وموجزة: "${prompt}"`;
-              default: return `أنت مساعد ذكاء اصطناعي شخصي لمطور ويب اسمه عمر عطيه الفرجانى. 
+              default: return `أنت مساعد ذكاء اصطناعي شخصي لمطور ويب اسمه عمر عطيه الفرجانى. مهمتك الوحيدة هي الإجابة على أسئلة المستخدم عن المطور عمر فقط.
 
 معلومات المطور:
 - الاسم: عمر الفرجانى (Omar Fergany)
@@ -754,7 +745,7 @@ document.addEventListener('DOMContentLoaded', () => {
 - إنستجرام: https://www.instagram.com/fergany___x
 - الموقع الشخصي: Fergany71.github.io
 
-مهمتك الحالية هي الإجابة على أسئلة المستخدم عن عمر والمساعدة في أي استفسارات تقنية. كن ودوداً ومفيداً واستخدم اللهجة المصرية في الحديث.`;
+مهمتك الحالية هي الإجابة على أسئلة المستخدم عن عمر فقط. إذا سأل المستخدم عن أي شيء آخر غير معلومات المطور، أخبره أنك مساعد شخصي للمطور عمر فقط. كن ودوداً ومفيداً واستخدم اللهجة المصرية في الحديث.`;
           }
       },
 
@@ -766,7 +757,7 @@ document.addEventListener('DOMContentLoaded', () => {
           this.messages.scrollTop = this.messages.scrollHeight;
           
           // OpenAI API Integration
-          const API_KEY = "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";
+          const API_KEY = "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";
 
 
           const model = (mode === 'image_analysis' && imageData) ? 'openai/gpt-4o' : 'openai/gpt-3.5-turbo';
