@@ -1,0 +1,27 @@
+{
+  "name": "منصة الامتحانات - عمر الفرجاني",
+  "short_name": "الامتحانات",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "./index%20(3).html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#030712",
+  "theme_color": "#0b1220",
+  "description": "منصة امتحانات حديثة، ذكية وسريعة مع وضع تثبيت كتطبيق ودعم العمل دون اتصال.",
+  "categories": ["education", "productivity"],
+  "orientation": "portrait-primary",
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

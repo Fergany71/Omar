@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>المساعد الشخصي للمطور عمر الفرجانى</title>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+  
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+  <style>
+      /* ==============================================
+      CSS STYLES FOR FULLSCREEN AI ASSISTANT WEBSITE
+      ==============================================
+      */
+
+      /* --- Root Variables for Theming (Light/Dark Mode) --- */
+      :root {
+          --bg-color: #f3f4f6; 
+          --text-color: #1f2937;
+          --text-secondary-color: #4b5563; 
+          --primary-color: #0d9488; 
+          --primary-hover-color: #0f766e;
+          --border-color: #d1d5db;
+          --chat-bg-calm: #ffffff;
+          --chat-bg-calm-secondary: #f9fafb;
+          --gemini-feature-bg: rgba(13, 148, 136, 0.05);
+          --gemini-feature-border: rgba(13, 148, 136, 0.3);
+      }
+      html.dark {
+          --bg-color: #111827; 
+          --text-color: #f9fafb;
+          --text-secondary-color: #9ca3af; 
+          --border-color: #4b5563;
+          --chat-bg-calm: #030712;
+          --chat-bg-calm-secondary: #111827;
+          --gemini-feature-bg: rgba(13, 148, 136, 0.1);
+          --gemini-feature-border: rgba(13, 148, 136, 0.5);
+      }
+      
+      /* --- Fullscreen Layout Styles (FIXED FOR MOBILE) --- */
+      * {
+          box-sizing: border-box;
+      }
+      html, body {
+          height: 100%;
+          width: 100%;
+          margin: 0;
+          padding: 0;
+          overflow: hidden; /* Prevent scrolling of the body */
+          font-family: 'Cairo', sans-serif; 
+          background-color: var(--bg-color); 
+      }
+      
+      /* --- Professional Preloader --- */
+      #preloader {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          z-index: 10000;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-direction: column;
+          transition: opacity 0.8s ease-out, visibility 0.8s ease-out;
+      }
+      #preloader.hidden {
+          opacity: 0;
+          visibility: hidden;
+      }
+      .preloader-logo {
+          width: 100px;
+          height: 100px;
+          border-radius: 50%;
+          border: 5px solid transparent;
+          border-top-color: #ffffff;
+          border-right-color: rgba(255,255,255,0.3);
+          animation: spin 2s linear infinite;
+          margin-bottom: 2rem;
+          position: relative;
+      }
+      .preloader-logo::before {
+          content: '';
+          position: absolute;
+          top: 5px;
+          left: 5px;
+          right: 5px;
+          bottom: 5px;
+          border-radius: 50%;
+          border: 3px solid transparent;
+          border-top-color: rgba(255,255,255,0.6);
+          animation: spin 1.5s linear infinite reverse;
+      }
+      @keyframes spin { to { transform: rotate(360deg); } }
+      #preloader-status {
+          font-size: 1.3rem;
+          color: #ffffff;
+          margin-bottom: 2rem;
+          font-weight: 600;
+          text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      }
+      .progress-bar-container {
+          width: 80%;
+          max-width: 400px;
+          height: 10px;
+          background-color: rgba(255,255,255,0.2);
+          border-radius: 10px;
+          overflow: hidden;
+          box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+      }
+      #progress-bar {
+          width: 0%;
+          height: 100%;
+          background: linear-gradient(90deg, #00d4ff, #090979);
+          transition: width 0.4s ease-out;
+          border-radius: 10px;
+          box-shadow: 0 2px 8px rgba(0,212,255,0.4);
+      }
+      #enter-btn {
+          display: none; /* Hidden initially */
+          margin-top: 2.5rem;
+          padding: 1rem 2.5rem;
+          font-size: 1.2rem;
+          font-weight: bold;
+          color: white;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          border: 2px solid rgba(255,255,255,0.3);
+          border-radius: 30px;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      }
+      #enter-btn:hover {
+          transform: translateY(-2px) scale(1.05);
+          box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+          border-color: rgba(255,255,255,0.6);
+      }
+
+
+      /* --- The Main Chat Window Container (FIXED FOR MOBILE) --- */
+      #chat-container { 
+          width: 100%; 
+          height: 100%; /* Fills the body height */
+          background: var(--chat-bg-calm-secondary);
+          display: flex; 
+          flex-direction: column;
+          overflow: hidden; 
+          visibility: hidden; /* Initially hidden */
+          opacity: 0;
+          transition: opacity 0.5s ease-in;
+      }
+      #chat-container.visible {
+          visibility: visible;
+          opacity: 1;
+      }
+
+      /* --- Enhanced Chat Styles --- */
+      .chat-header{
+          padding:.75rem 1.25rem;
+          background:linear-gradient(135deg, rgba(3,7,18,.6), rgba(30,41,59,.8));
+          backdrop-filter:blur(15px);
+          -webkit-backdrop-filter:blur(15px);
+          color:#fff;
+          border-bottom:1px solid rgba(100,116,139,.3);
+          position:relative;
+          z-index:10;
+          flex-shrink:0;
+          display:flex;
+          align-items:center;
+          justify-content:space-between;
+          box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      }
+      .header-title{
+          display:flex;
+          align-items:center;
+          gap:.75rem;
+      }
+      .header-title h3{
+          margin:0;
+          font-size:1.2rem;
+          font-weight:700;
+          font-family:'Amiri',serif;
+          background: linear-gradient(45deg, #ffffff, #e2e8f0);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+      }
+      .chat-status{
+          font-size:.75rem;
+          opacity:.9;
+          display:flex;
+          align-items:center;
+          gap:6px;
+          border-right:1px solid rgba(255,255,255,.2);
+          padding-right:.75rem;
+      }
+      .status-indicator{
+          width:10px;
+          height:10px;
+          background:linear-gradient(45deg,#34d399,#10b981);
+          border-radius:50%;
+          animation:smart-status-blink 2.5s infinite;
+          box-shadow:0 0 15px #34d399;
+      }
+      @keyframes smart-status-blink{
+          0%,100%{opacity:1;transform:scale(1)}
+          50%{opacity:.6;transform:scale(1.3)}
+      }
+      .theme-switch-wrapper{
+          display:flex;
+          align-items:center;
+      }
+      .theme-switch{
+          display:inline-block;
+          height:26px;
+          position:relative;
+          width:48px;
+      }
+      .theme-switch input{
+          display:none;
+      }
+      .slider{
+          background-color:#555;
+          bottom:0;
+          cursor:pointer;
+          left:0;
+          position:absolute;
+          right:0;
+          top:0;
+          transition:.4s;
+          border-radius:26px;
+          box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+      }
+      .slider:before{
+          background-color:#fff;
+          bottom:3px;
+          content:"";
+          height:20px;
+          left:3px;
+          position:absolute;
+          transition:.4s;
+          width:20px;
+          border-radius:50%;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      }
+      input:checked+.slider{
+          background-color:var(--primary-color);
+      }
+      input:checked+.slider:before{
+          transform:translateX(22px);
+      }
+      
+      /* --- Enhanced Message Styles --- */
+      #chat-messages{
+          flex-grow:1;
+          padding:1rem;
+          overflow-y:auto;
+          display:flex;
+          flex-direction:column;
+          gap:1rem;
+          background-color:var(--chat-bg-calm);
+          background-image:radial-gradient(rgba(128,128,128,.05) 1px,transparent 1px);
+          background-size:20px 20px;
+          height:0;
+      }
+      .message{
+          padding:.8rem 1.2rem;
+          border-radius:18px;
+          max-width:85%;
+          line-height:1.65;
+          position:relative;
+          animation:message-appear .5s cubic-bezier(.25,1,.5,1);
+          color:var(--text-color);
+          word-wrap:break-word;
+      }
+      @keyframes message-appear{
+          from{opacity:0;transform:translateY(15px) scale(.95)}
+          to{opacity:1;transform:translateY(0) scale(1)}
+      }
+      .message.user{
+          background:linear-gradient(135deg,var(--primary-color),var(--primary-hover-color));
+          color:#fff;
+          align-self:flex-start;
+          border-bottom-left-radius:6px;
+          box-shadow:0 4px 15px -2px rgba(13,148,136,.3);
+      }
+      .message.ai{
+          background:var(--chat-bg-calm-secondary);
+          border:1px solid var(--border-color);
+          align-self:flex-end;
+          border-bottom-right-radius:6px;
+          display:flex;
+          align-items:flex-start;
+          gap:.8rem;
+          box-shadow:0 2px 8px rgba(0,0,0,.05);
+          text-align:right;
+      }
+      .message .image-thumbnail{
+          max-width:150px;
+          max-height:150px;
+          border-radius:10px;
+          margin-top:10px;
+          border:2px solid var(--border-color);
+          cursor:pointer;
+          transition: transform 0.2s ease;
+      }
+      .message .image-thumbnail:hover{
+          transform: scale(1.05);
+      }
+      .message.user .image-thumbnail{
+          border-color:rgba(255,255,255,.5);
+      }
+      .message.ai .ai-avatar{
+          width:36px;
+          height:36px;
+          border-radius:50%;
+          background:linear-gradient(135deg,#4f46e5,#a78bfa);
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          color:#fff;
+          font-size:16px;
+          flex-shrink:0;
+          margin-top:4px;
+          box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
+      }
+      .message.ai p,.message.ai ul,.message.ai ol{
+          margin-bottom:.5rem;
+      }
+      .message.ai ul{
+          padding-right:1.2rem;
+          list-style-type:'✅ ';
+      }
+      .message.ai ol{
+          padding-right:1.2rem;
+      }
+      .message.ai strong{
+          color:var(--primary-color);
+      }
+      .message.ai code{
+          background-color:var(--chat-bg-calm);
+          color:#93c5fd;
+          border:1px solid var(--border-color);
+          padding:.8rem 1rem;
+          border-radius:8px;
+          font-family:'Courier New',monospace;
+          font-size:.9em;
+          direction:ltr;
+          text-align:left;
+          display:block;
+          white-space:pre-wrap;
+          word-wrap:break-word;
+      }
+      
+      /* --- Enhanced Footer Styles --- */
+      .chat-footer{
+          flex-shrink:0;
+          background:var(--chat-bg-calm-secondary);
+          border-top:1px solid var(--border-color);
+          box-shadow:0 -5px 20px -5px rgba(0,0,0,.05);
+      }
+      #chat-quick-replies{
+          padding:.75rem 1rem;
+          display:flex;
+          flex-wrap:wrap;
+          gap:.5rem;
+          justify-content:center;
+          border-bottom:1px solid var(--border-color);
+          max-height:120px;
+          overflow-y:auto;
+      }
+      .quick-reply-btn{
+          background:transparent;
+          border:1px solid var(--primary-color);
+          color:var(--primary-color);
+          padding:.4rem 1rem;
+          font-size:.85rem;
+          border-radius:16px;
+          cursor:pointer;
+          transition:all .2s ease-in-out;
+          font-weight:600;
+      }
+      .quick-reply-btn:hover{
+          background-color:var(--primary-color);
+          color:#fff;
+          transform:translateY(-1px);
+          box-shadow: 0 4px 8px rgba(13,148,136,.2);
+      }
+      .quick-reply-btn.gemini-feature{
+          background-color:var(--gemini-feature-bg);
+          border-color:var(--gemini-feature-border);
+      }
+      #chat-input-wrapper{
+          display:flex;
+          align-items:center;
+          padding:.75rem 1rem;
+      }
+      #image-upload-btn{
+          background:none;
+          border:none;
+          color:var(--text-secondary-color);
+          font-size:1.5rem;
+          cursor:pointer;
+          transition:all .2s;
+          padding:.5rem;
+          border-radius: 8px;
+      }
+      #image-upload-btn:hover{
+          color:var(--primary-color);
+          background-color: var(--gemini-feature-bg);
+      }
+      #chat-input{
+          flex-grow:1;
+          border:2px solid var(--border-color);
+          background:var(--chat-bg-calm);
+          padding:.6rem 1rem;
+          color:var(--text-color);
+          outline:none;
+          border-radius:20px;
+          font-size:1rem;
+          transition:all .3s ease;
+          margin:0 .75rem;
+      }
+      #chat-input:focus{
+          border-color:var(--primary-color);
+          box-shadow:0 0 0 3px rgba(13,148,136,.1);
+      }
+      #chat-send-btn{
+          background:linear-gradient(135deg,var(--primary-color),var(--primary-hover-color));
+          color:#fff;
+          border:none;
+          border-radius:50%;
+          width:48px;
+          height:48px;
+          font-size:1.2rem;
+          cursor:pointer;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          transition:all .3s ease;
+          box-shadow:0 4px 12px rgba(13,148,136,.3);
+      }
+      #chat-send-btn:hover{
+          transform:scale(1.1);
+          box-shadow:0 6px 16px rgba(13,148,136,.4);
+      }
+      #chat-send-btn:active{
+          transform:scale(.95);
+      }
+  </style>
+</head>
+<body>
+
+  <div id="preloader">
+      <div class="preloader-logo"></div>
+      <p id="preloader-status">جاري تهيئة المساعد...</p>
+      <div class="progress-bar-container">
+          <div id="progress-bar"></div>
+      </div>
+      <button id="enter-btn">ادخل إلى المساعد</button>
+  </div>
+
+  <audio id="startup-sound" src="https://cdn.pixabay.com/audio/2022/11/17/audio_83542d2493.mp3" preload="auto"></audio>
+
+  <div id="chat-container">
+      <div class="chat-header">
+          <div class="header-title">
+              <div class="chat-status">
+                  <div class="status-indicator"></div>
+                  <span>متصل</span>
+              </div>
+              <h3>المساعد الشخصي لـ عمر</h3>
+          </div>
+          <div class="theme-switch-wrapper">
+              <label class="theme-switch" for="theme-checkbox">
+                  <input type="checkbox" id="theme-checkbox" />
+                  <div class="slider"></div>
+              </label>
+          </div>
+      </div>
+      
+      <div id="chat-messages"></div>
+      
+      <div class="chat-footer">
+          <div id="chat-quick-replies"></div>
+          <div id="chat-input-wrapper">
+              <input type="file" id="image-upload-input" accept="image/*" style="display: none;">
+              <button id="image-upload-btn" title="تحليل صورة"><i class="fas fa-paperclip"></i></button>
+              <input id="chat-input" type="text" placeholder="اسأل أي حاجة عن المطور عمر..." autocomplete="off">
+              <button id="chat-send-btn"><i class="fas fa-paper-plane"></i></button>
+          </div>
+      </div>
+  </div>
+  
+<script>
+/* ==============================================
+JAVASCRIPT LOGIC FOR THE AI ASSISTANT WEBSITE
+==============================================
+*/
+document.addEventListener('DOMContentLoaded', () => {
+
+  // --- Preloader, Sound, and Layout Fix Logic ---
+  const preloader = document.getElementById('preloader');
+  const preloaderStatus = document.getElementById('preloader-status');
+  const progressBar = document.getElementById('progress-bar');
+  const enterBtn = document.getElementById('enter-btn');
+  const startupSound = document.getElementById('startup-sound');
+  const chatContainer = document.getElementById('chat-container');
+
+  // Smart preloader simulation
+  const statusMessages = [
+      "جاري تهيئة المساعد الذكي...",
+      "تحميل نماذج الذكاء الاصطناعي المتقدمة...",
+      "فحص الاتصال بواجهة Gemini API...",
+      "تحضير الأدوات الذكية...",
+      "تحسين الأداء والسرعة...",
+      "كل شيء جاهز تقريباً...",
+      "🚀 اكتمل التحميل بنجاح!"
+  ];
+  let progress = 0;
+  let statusIndex = 0;
+  const interval = setInterval(() => {
+      progress += Math.random() * 12 + 3; // تحسين سرعة التحميل
+      if (progress > 100) progress = 100;
+      
+      progressBar.style.width = progress + '%';
+      
+      let nextStatusIndex = Math.floor(progress / 16); // تقسيم أفضل للرسائل
+      if(nextStatusIndex > statusIndex && nextStatusIndex < statusMessages.length) {
+          statusIndex = nextStatusIndex;
+          preloaderStatus.textContent = statusMessages[statusIndex];
+      }
+
+      if (progress >= 100) {
+          clearInterval(interval);
+          preloaderStatus.textContent = statusMessages[statusMessages.length - 1];
+          setTimeout(() => {
+              preloaderStatus.style.display = 'none';
+              progressBar.parentElement.style.display = 'none';
+              enterBtn.style.display = 'block';
+          }, 800);
+      }
+  }, 300);
+
+  // Enter button logic
+  enterBtn.addEventListener('click', () => {
+      // Play sound
+      startupSound.play().catch(e => console.error("Autoplay was prevented:", e));
+      
+      // Hide preloader
+      preloader.classList.add('hidden');
+      
+      // Show chat and initialize
+      chatContainer.classList.add('visible');
+      chatWidget.init();
+  });
+
+
+  // --- Theme Switcher Logic ---
+  const themeCheckbox = document.getElementById('theme-checkbox');
+  const docHtml = document.documentElement;
+  function applyTheme(theme) {
+      docHtml.classList.remove('light', 'dark');
+      docHtml.classList.add(theme);
+      localStorage.setItem('theme', theme);
+  }
+  const currentTheme = localStorage.getItem('theme') || 'light';
+  applyTheme(currentTheme);
+  if(themeCheckbox) {
+      if (currentTheme === 'dark') themeCheckbox.checked = true;
+      themeCheckbox.addEventListener('change', () => {
+          applyTheme(themeCheckbox.checked ? 'dark' : 'light');
+      });
+  }
+
+  // --- Gemini AI Chatbot Logic ---
+  const chatWidget = {
+      // DOM element references
+      messages: document.getElementById('chat-messages'),
+      input: document.getElementById('chat-input'),
+      sendBtn: document.getElementById('chat-send-btn'),
+      quickReplies: document.getElementById('chat-quick-replies'),
+      imageUploadInput: document.getElementById('image-upload-input'),
+      imageUploadBtn: document.getElementById('image-upload-btn'),
+      
+      history: [], 
+      chatMode: 'normal',
+      uploadedImageData: null,
+
+      init() {
+          this.setContainerHeight();
+          window.addEventListener('resize', () => this.setContainerHeight());
+          this.sendBtn.addEventListener('click', () => this.sendMessage());
+          this.input.addEventListener('keypress', (e) => { 
+              if (e.key === 'Enter' && !e.shiftKey) { 
+                  e.preventDefault(); this.sendMessage(); 
+              } 
+          });
+          this.imageUploadBtn.addEventListener('click', () => this.imageUploadInput.click());
+          this.imageUploadInput.addEventListener('change', (e) => this.handleImageUpload(e));
+          this.loadInitialState();
+      },
+
+      setContainerHeight() {
+          chatContainer.style.height = `${window.innerHeight}px`;
+      },
+
+      loadInitialState() {
+          this.chatMode = 'normal';
+          this.uploadedImageData = null;
+          this.addMessage("أهلاً بك! أنا المساعد الشخصي للمطور عمر الفرجانى. كيف يمكنني مساعدتك اليوم؟", 'ai');
+          this.showQuickReplies([
+              { text: "من هو المطور وكيفية التواصل معه؟", action: 'send' },
+              { text: "✨ أدوات ذكية", action: 'show_smart_tools', isGemini: true }
+          ]);
+          this.input.placeholder = "اسأل أي حاجة عن المطور عمر...";
+      },
+
+      sendMessage() {
+          const userMessage = this.input.value.trim();
+          if (!userMessage && !this.uploadedImageData) return;
+          this.addMessage(userMessage, 'user', this.uploadedImageData);
+          this.input.value = '';
+          this.quickReplies.innerHTML = '';
+          if (this.chatMode === 'image_analysis_prompt') {
+              this.getAIResponse(userMessage, 'image_analysis', this.uploadedImageData);
+              return;
+          }
+          switch(this.chatMode) {
+              case 'code_explain_prompt': this.getAIResponse(userMessage, 'code_explain'); break;
+              case 'idea_generation_prompt': this.getAIResponse(userMessage, 'idea_generation'); break;
+              case 'email_draft_prompt': this.getAIResponse(userMessage, 'email_draft'); break;
+              case 'learning_path_prompt': this.getAIResponse(userMessage, 'learning_path'); break;
+              case 'code_refactor_prompt': this.getAIResponse(userMessage, 'code_refactor'); break;
+              case 'regex_generator_prompt': this.getAIResponse(userMessage, 'regex_generator'); break;
+              case 'translation_prompt': this.getAIResponse(userMessage, 'translation'); break;
+              case 'summarization_prompt': this.getAIResponse(userMessage, 'summarization'); break;
+              default: this.getAIResponse(userMessage, 'normal');
+          }
+      },
+      
+      handleQuickReply(reply) {
+          this.quickReplies.innerHTML = '';
+          switch(reply.action) {
+              case 'send': this.addMessage(reply.text, 'user'); this.getAIResponse(reply.text, 'normal'); break;
+              case 'show_smart_tools': this.showSmartTools(); break;
+              case 'activate_image_analyzer': this.chatMode = 'image_analysis_prompt'; this.addMessage("تمام، ارفع الصورة اللي عايز تحللها، وبعدها اسألني عنها.", 'ai'); this.input.placeholder = "اسأل عن الصورة بعد رفعها..."; this.imageUploadInput.click(); break;
+              case 'activate_code_explainer': this.chatMode = 'code_explain_prompt'; this.addMessage("تمام، أنا جاهز. الصق الكود اللي عايزني أشرحهولك.", 'ai'); this.input.placeholder = "الصق الكود هنا..."; break;
+              case 'activate_idea_generator': this.chatMode = 'idea_generation_prompt'; this.addMessage("أكيد! تحب فكرة مشروع عن إيه؟", 'ai'); this.input.placeholder = "اكتب موضوع فكرة المشروع..."; break;
+              case 'activate_email_drafter': this.chatMode = 'email_draft_prompt'; this.addMessage("بالتأكيد! ما هو موضوع الإيميل أو الرسالة؟", 'ai'); this.input.placeholder = "اكتب موضوع الإيميل هنا..."; break;
+              case 'activate_learning_path_generator': this.chatMode = 'learning_path_prompt'; this.addMessage("فكرة ممتازة! ما هي التقنية أو اللغة التي تريد تعلمها؟", 'ai'); this.input.placeholder = "اكتب اسم التقنية هنا..."; break;
+              case 'activate_code_refactorer': this.chatMode = 'code_refactor_prompt'; this.addMessage("تمام، الصق الكود اللي عايز تصلحه أو تحسنه.", 'ai'); this.input.placeholder = "الصق الكود هنا لتحسينه..."; break;
+              case 'activate_regex_generator': this.chatMode = 'regex_generator_prompt'; this.addMessage("أكيد! اوصفلي انت عايز تماتش إيه بالظبط.", 'ai'); this.input.placeholder = "مثال: ايميل أو رقم تليفون مصري..."; break;
+              case 'activate_translator': this.chatMode = 'translation_prompt'; this.addMessage("تمام، اكتب النص اللي عايز تترجمه.", 'ai'); this.input.placeholder = "اكتب النص للترجمة..."; break;
+              case 'activate_summarizer': this.chatMode = 'summarization_prompt'; this.addMessage("أكيد، الصق النص الطويل هنا وأنا هلخصهولك.", 'ai'); this.input.placeholder = "الصق النص لتلخيصه..."; break;
+          }
+      },
+
+      showSmartTools() {
+          this.addMessage("بكل سرور! دي الأدوات الذكية اللي أقدر أساعدك بيها:", 'ai');
+          this.showQuickReplies([
+              { text: "✨ تحليل صورة", action: 'activate_image_analyzer', isGemini: true },
+              { text: "✨ شرح كود", action: 'activate_code_explainer', isGemini: true },
+              { text: "✨ تحسين وتصحيح كود", action: 'activate_code_refactorer', isGemini: true },
+              { text: "✨ إنشاء Regex", action: 'activate_regex_generator', isGemini: true },
+              { text: "✨ اقتراح فكرة مشروع", action: 'activate_idea_generator', isGemini: true },
+              { text: "✨ كتابة إيميل/رسالة", action: 'activate_email_drafter', isGemini: true },
+              { text: "✨ إنشاء خطة تعلم", action: 'activate_learning_path_generator', isGemini: true },
+              { text: "✨ ترجمة احترافية", action: 'activate_translator', isGemini: true },
+              { text: "✨ تلخيص نصوص", action: 'activate_summarizer', isGemini: true },
+          ]);
+      },
+
+      handleImageUpload(event) {
+          const file = event.target.files[0];
+          if (!file) return;
+          const reader = new FileReader();
+          reader.onload = (e) => {
+              this.uploadedImageData = {
+                  base64: e.target.result.split(',')[1],
+                  mimeType: file.type,
+                  previewUrl: e.target.result
+              };
+              this.chatMode = 'image_analysis_prompt';
+              this.addMessage(`تم رفع الصورة. اسألني أي حاجة عنها!`, 'ai');
+              this.input.placeholder = "اسأل عن الصورة التي رفعتها...";
+              this.input.focus();
+          };
+          reader.readAsDataURL(file);
+          event.target.value = '';
+      },
+
+      addMessage(content, type, imageData = null) {
+          const div = document.createElement('div');
+          div.className = `message ${type}`;
+          let messageContent = '';
+          if (type === 'ai') {
+              const avatar = `<div class="ai-avatar"><i class="fas fa-robot"></i></div>`;
+              messageContent = `<div>${marked.parse(content, { gfm: true, breaks: true })}</div>`;
+              div.innerHTML = avatar + messageContent;
+          } else {
+              messageContent = content;
+              if (imageData) {
+                  messageContent += `<br><img src="${imageData.previewUrl}" class="image-thumbnail" alt="صورة مرفوعة" onclick="window.open('${imageData.previewUrl}', '_blank')">`;
+              }
+              div.innerHTML = messageContent;
+          }
+          this.messages.appendChild(div);
+          this.messages.scrollTop = this.messages.scrollHeight;
+      },
+
+      showQuickReplies(replies) {
+          this.quickReplies.innerHTML = '';
+          if (!replies || replies.length === 0) {
+              this.quickReplies.style.display = 'none'; return;
+          }
+          this.quickReplies.style.display = 'flex';
+          replies.forEach(reply => {
+              const btn = document.createElement('button');
+              btn.className = 'quick-reply-btn';
+              if (reply.isGemini) btn.classList.add('gemini-feature');
+              btn.textContent = reply.text;
+              btn.onclick = () => this.handleQuickReply(reply);
+              this.quickReplies.appendChild(btn);
+          });
+      },
+      
+      getSystemPrompt(mode, prompt) {
+          switch(mode) {
+              case 'image_analysis': return `أنت خبير تحليل صور عالمي. مهمتك هي تحليل الصورة المقدمة بدقة والإجابة على سؤال المستخدم عنها باللهجة المصرية. كن دقيقاً ومفصلاً في تحليلك. سؤال المستخدم هو: "${prompt}"`;
+              case 'code_explain': return `أنت خبير برمجة ومدرس ممتاز باللهجة المصرية. اشرح الكود التالي بوضوح: \`\`\`\n${prompt}\n\`\`\``;
+              case 'idea_generation': return `أنت خبير تقني ومستشار إبداعي. ولّد فكرة مشروع مبتكرة عن: "${prompt}"`;
+              case 'email_draft': return `أنت مساعد كتابة محترف. اكتب مسودة إيميل عن: "${prompt}"`;
+              case 'learning_path': return `أنت مرشد تقني وخبير تعليمي. أنشئ خطة تعلم لـ: "${prompt}"`;
+              case 'code_refactor': return `أنت مهندس برمجيات خبير. حلل وحسّن الكود التالي مع شرح التغييرات: \`\`\`\n${prompt}\n\`\`\``;
+              case 'regex_generator': return `أنت خبير عالمي في Regex. حوّل الوصف التالي إلى نمط Regex مع شرحه: "${prompt}"`;
+              case 'translation': return `أنت مترجم فوري محترف. ترجم النص التالي مع الحفاظ على السياق واللهجة إن أمكن: "${prompt}"`;
+              case 'summarization': return `أنت باحث وخبير في تلخيص المعلومات. لخص النص التالي في نقاط واضحة وموجزة: "${prompt}"`;
+              default: return `أنت مساعد ذكاء اصطناعي شخصي لمطور ويب اسمه عمر عطيه الفرجانى. 
+
+معلومات المطور:
+- الاسم: عمر الفرجانى (Omar Fergany)
+- البريد الإلكتروني: omarfergany100@gmail.com
+- واتساب: https://wa.me/201225860308
+- فيسبوك: https://www.facebook.com/share/1B6Aef5zFx/
+- إنستجرام: https://www.instagram.com/fergany___x
+- الموقع الشخصي: Fergany71.github.io
+
+مهمتك الحالية هي الإجابة على أسئلة المستخدم عن عمر والمساعدة في أي استفسارات تقنية. كن ودوداً ومفيداً واستخدم اللهجة المصرية في الحديث.`;
+          }
+      },
+
+      async getAIResponse(prompt, mode, imageData = null) {
+          const loadingDiv = document.createElement('div');
+          loadingDiv.className = 'message ai';
+          loadingDiv.innerHTML = `<div class="ai-avatar"><i class="fas fa-robot"></i></div><div><span style="animation: pulse 1.5s infinite ease-in-out;">يكتب الآن...</span></div>`;
+          this.messages.appendChild(loadingDiv);
+          this.messages.scrollTop = this.messages.scrollHeight;
+          
+          // OpenAI API Integration
+          const API_KEY = "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";
+
+
+          const model = (mode === 'image_analysis' && imageData) ? 'openai/gpt-4o' : 'openai/gpt-3.5-turbo';
+          const API_URL = 'https://openrouter.ai/api/v1/chat/completions';
+          
+          const systemPrompt = this.getSystemPrompt(mode, prompt);
+          let messages;
+          if (mode === 'normal') {
+              const normalSystem = this.getSystemPrompt('normal');
+              messages = [{role: "system", content: normalSystem}];
+              this.history.forEach(entry => {
+                  let role = entry.role;
+                  if (role === "model") role = "assistant";
+                  let content = entry.parts ? entry.parts[0].text : (entry.content || "");
+                  messages.push({role, content});
+              });
+              messages.push({role: "user", content: prompt});
+          } else if (mode === 'image_analysis' && imageData) {
+              messages = [{role: "system", content: `أنت خبير تحليل صور عالمي. مهمتك هي تحليل الصورة المقدمة بدقة والإجابة على سؤال المستخدم عنها باللهجة المصرية. كن دقيقاً ومفصلاً في تحليلك.`}];
+              messages.push({
+                  role: "user",
+                  content: [
+                      {type: "text", text: prompt},
+                      {type: "image_url", image_url: {url: `data:${imageData.mimeType};base64,${imageData.base64}`}}
+                  ]
+              });
+          } else {
+              messages = [{role: "system", content: systemPrompt}];
+          }
+          const payload = {
+              model,
+              messages,
+              max_tokens: 1500,
+              temperature: 0.7
+          };
+          
+          try {
+              const response = await fetch(API_URL, {
+                  method: 'POST',
+                  headers: {
+                      'Content-Type': 'application/json',
+                      'Authorization': `Bearer ${API_KEY}`
+                  },
+                  body: JSON.stringify(payload)
+              });
+              
+              if (!response.ok) {
+                  const errorData = await response.json().catch(() => ({}));
+                  throw new Error(errorData.error?.message || `HTTP ${response.status}`);
+              }
+              
+              const data = await response.json();
+              this.messages.removeChild(loadingDiv);
+              
+              if (data.choices && data.choices[0].message && data.choices[0].message.content) {
+                  const aiText = data.choices[0].message.content;
+                  this.addMessage(aiText, 'ai');
+                  
+                  if (mode === 'normal') {
+                      this.history.push({ role: "user", content: prompt });
+                      this.history.push({ role: "assistant", content: aiText });
+                  } else {
+                      this.addMessage("هل أقدر أساعدك في حاجة تانية؟", "ai");
+                      this.loadInitialState(); // الرجوع للحالة الأولية بعد استخدام أداة ذكية
+                  }
+              } else {
+                  this.addMessage("معلش، شكلي سرحت شوية. ممكن تسأل تاني؟", 'ai');
+                  console.log("Unexpected response structure:", data);
+              }
+          } catch (error) {
+              console.error("API Error:", error);
+              this.messages.removeChild(loadingDiv);
+              let displayError = `عفواً، حصل خطأ فني: ${error.message}.`;
+              if (error.message.includes('API key') || error.message.includes('Invalid Authentication')) {
+                  displayError = "خطأ: مفتاح API غير صالح. يرجى التحقق منه.";
+              }
+              this.addMessage(displayError, 'ai');
+          } finally {
+              if (this.history.length > 8) { 
+                  this.history = this.history.slice(-8); 
+              }
+              // التأكد من إعادة تعيين الحالة بعد استخدام أداة ذكية
+              if (mode !== 'normal') { 
+                  this.chatMode = 'normal';
+                  this.uploadedImageData = null;
+                  this.input.placeholder = "اسأل أي حاجة عن المطور عمر...";
+              }
+          }
+      }
+  };
+
+});
+</script>
+</body>
+</html>
+

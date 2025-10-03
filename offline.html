@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>وضع عدم الاتصال</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root { --bg:#0b1220; --card:#121a2b; --text:#e5e7eb; --muted:#9ca3af; --accent:#60a5fa; --accent2:#8b5cf6; }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;font-family:'Cairo',sans-serif;background:linear-gradient(135deg,#0b1220,#0f172a 60%,#111827);color:var(--text);display:flex;align-items:center;justify-content:center;padding:16px}
+    .card{background:linear-gradient(135deg,rgba(31,41,55,.8),rgba(17,24,39,.8));border:1px solid rgba(99,102,241,.3);border-radius:16px;padding:24px;max-width:560px;width:100%;text-align:center;backdrop-filter:blur(10px);box-shadow:0 15px 40px rgba(0,0,0,.35)}
+    .icon{width:70px;height:70px;border-radius:50%;display:grid;place-items:center;margin:0 auto 12px;background:radial-gradient(120% 120% at 30% 30%,rgba(96,165,250,.2),rgba(139,92,246,.15) 60%,transparent 61%);position:relative}
+    .icon:before{content:"";position:absolute;inset:-2px;border-radius:50%;background:conic-gradient(from 0deg,#60a5fa,#a78bfa,#22d3ee,#60a5fa);filter:blur(6px);opacity:.35}
+    .title{font-weight:800;font-size:1.5rem;margin:6px 0 4px}
+    .muted{color:var(--muted);font-size:.95rem}
+    .tips{margin-top:16px;text-align:right}
+    .tip{display:flex;align-items:center;gap:8px;margin:8px 0;color:#cbd5e1}
+    .btns{display:flex;gap:8px;margin-top:18px;flex-wrap:wrap}
+    .btn{flex:1;min-width:160px;padding:10px 14px;border-radius:12px;border:none;color:white;font-weight:800;cursor:pointer;transition:transform .2s,box-shadow .2s}
+    .btn.refresh{background:linear-gradient(135deg,#3b82f6,#2563eb)}
+    .btn.home{background:linear-gradient(135deg,#8b5cf6,#7c3aed)}
+    .btn:hover{transform:translateY(-2px);box-shadow:0 10px 25px rgba(59,130,246,.35)}
+    .small{font-size:.85rem;color:#9ca3af;margin-top:10px}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon"><i class="fa-solid fa-wifi-slash"></i></div>
+    <div class="title">لا يوجد اتصال بالإنترنت</div>
+    <p class="muted">يمكنك متابعة التصفح عند عودة الاتصال. تم تفعيل وضع العمل دون اتصال لتجربة أفضل.</p>
+    <div class="tips">
+      <div class="tip"><i class="fa-solid fa-rotate fa-sm"></i> جرّب تحديث الصفحة بعد توصيل الإنترنت.</div>
+      <div class="tip"><i class="fa-solid fa-mobile-screen-button fa-sm"></i> يمكنك تثبيت المنصة كتطبيق لتجربة أسرع.</div>
+      <div class="tip"><i class="fa-solid fa-bolt fa-sm"></i> يتم حفظ الأصول المهمة تلقائياً لتشغيل سريع لاحقاً.</div>
+    </div>
+    <div class="btns">
+      <button class="btn refresh" onclick="location.reload()"><i class="fa-solid fa-rotate"></i> تحديث</button>
+      <button class="btn home" onclick="location.href='index%20(3).html'"><i class="fa-solid fa-house"></i> الصفحة الرئيسية</button>
+    </div>
+    <div class="small">وضع عدم الاتصال مفعل عبر Service Worker</div>
+  </div>
+</body>
+</html>
